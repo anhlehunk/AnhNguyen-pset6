@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">AnhNguyen-pset6</string>
-    <string name="title">App Name</string>
+    <string name="title">RijksmuseApp </string>
     <string name="appDescription">certain text explain app etc etc etc etc</string>
-    <string name="searchTitle">Search game title</string>
+    <string name="searchTitle">Search artwork</string>
     <string name="favorites">Favorites</string>
+    <string name="signout">sign out</string>
 
 
 </resources>
