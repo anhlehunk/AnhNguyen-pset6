@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -39,6 +41,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null){
+            //already logged in
+
+            Log.d("AUTH", mAuth.getCurrentUser().getEmail());
+            TextView currentUser = (TextView) findViewById(R.id.loginInfo);
+            currentUser.setText(mAuth.getCurrentUser().getEmail());
+
+
+        } else {
+
+            startActivityForResult(AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setTheme(R.style.FirebaseLoginTheme)
+                    .setProviders(
+                            AuthUI.EMAIL_PROVIDER,
+                            AuthUI.GOOGLE_PROVIDER)
+
+                    .build(), RC_SIGN_IN);
+        }
+
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -60,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        findViewById(R.id.googleSignIn).setOnClickListener(this);
-        findViewById(R.id.googleSignOut).setOnClickListener(this);
+
+        findViewById(R.id.SignOut).setOnClickListener(this);
     }
 
     @Override
@@ -83,13 +106,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (requestCode == RC_SIGN_IN){
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
-            if(result.isSuccess()){
+            if(resultCode == RESULT_OK){
+                Log.d("AUTH", mAuth.getCurrentUser().getEmail());
+                TextView currentUser = (TextView) findViewById(R.id.loginInfo);
+                currentUser.setText(mAuth.getCurrentUser().getEmail());
+
+            }
+
+            else{
+                Log.d("AUTH","not Authenticated");
+            }
+
+            /*if(result.isSuccess()){
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             }
 
             else
-                Log.d(TAG," google login failed");
+                Log.d(TAG," google login failed"); */
         }
     }
 
@@ -121,7 +155,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private void signOut(){
 
-        FirebaseAuth.getInstance().signOut();
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("AUTH", "USER LOGGED OUT");
+                        startActivityForResult(AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setTheme(R.style.FirebaseLoginTheme)
+                                .setProviders(
+                                        AuthUI.EMAIL_PROVIDER,
+                                        AuthUI.GOOGLE_PROVIDER)
+
+                                .build(), RC_SIGN_IN);
+                    }
+                });
+
+        //FirebaseAuth.getInstance().signOut();
     }
 
     @Override
@@ -134,11 +185,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.googleSignIn:
-                signIn();
-                break;
 
-            case R.id.googleSignOut:
+            case R.id.SignOut:
                 signOut();
                 break;
         }
