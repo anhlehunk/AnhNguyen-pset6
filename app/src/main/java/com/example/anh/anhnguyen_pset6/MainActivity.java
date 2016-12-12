@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.Auth;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import static android.R.attr.start;
 import static android.os.Build.VERSION_CODES.M;
+import static android.widget.Toast.makeText;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     private static int RC_SIGN_IN = 0;
@@ -107,7 +109,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
             if(resultCode == RESULT_OK){
-                Log.d("AUTH", mAuth.getCurrentUser().getEmail());
+                String userEmail = mAuth.getCurrentUser().getEmail();
+                Log.d("AUTH", userEmail);
+
+                // Toast
+                Toast succesful = makeText(MainActivity.this, "Logged in as: " + userEmail , Toast.LENGTH_SHORT);
+                succesful.show();
                 TextView currentUser = (TextView) findViewById(R.id.loginInfo);
                 currentUser.setText(mAuth.getCurrentUser().getEmail());
 
@@ -161,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d("AUTH", "USER LOGGED OUT");
+
                         startActivityForResult(AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .setTheme(R.style.FirebaseLoginTheme)
@@ -169,6 +177,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                         AuthUI.GOOGLE_PROVIDER)
 
                                 .build(), RC_SIGN_IN);
+                        //toast
+                        Toast succesful = makeText(MainActivity.this, "Logged out" , Toast.LENGTH_SHORT);
+                        succesful.show();
                     }
                 });
 

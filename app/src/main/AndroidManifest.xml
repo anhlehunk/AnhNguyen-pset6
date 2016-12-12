@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.anh.anhnguyen_pset6">
-    <uses-sdk tools:overrideLibrary="com.firebase.ui.auth, com.firebase.ui"/>
 
+    <uses-sdk tools:overrideLibrary="com.firebase.ui.auth, com.firebase.ui" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <activity android:name=".FavoriteActivity"></activity>
+        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".SearchFoundActivity"></activity>
     </application>
 
 </manifest>
