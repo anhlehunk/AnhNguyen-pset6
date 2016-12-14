@@ -74,6 +74,7 @@ public class SearchFoundActivity extends SearchActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String title = ((TextView) view).getText().toString();
+                Log.d("title", title);
                 String param = "t";
                 // Executes task to retrieve information of that specific movie
                 try {
@@ -118,13 +119,15 @@ public class SearchFoundActivity extends SearchActivity {
             // Retrieves the param and fills the URl accordingly and returns the results of the query
             String param = params[1];
             try {
-                InputStream input = new URL("http://www.omdbapi.com/?" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
+                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&format=json&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 StringBuilder result = new StringBuilder();
                 String line;
                 while((line = reader.readLine()) != null) {
                     result.append(line);
                 }
+                //Log.d("INPUUUUT", param + result );
                 return param + result;
             }
             catch (IOException e) {
@@ -139,26 +142,33 @@ public class SearchFoundActivity extends SearchActivity {
             String param = result.substring(0, 1);
             String query = result.substring(1);
             try {
+
                 JSONObject jsonObject = new JSONObject(query);
+                Log.d("INPUT", query);
                 if (jsonObject.has("Error")) {
                     items.clear();
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SearchFoundActivity.this, R.layout.list_item, R.id.textview, items);
                     SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
                 }
                 else {
+                    //Log.d("INPUparam", param);
                     // Statement for a search
-                    if (param.equals("s")) {
+                    if (param.equals("q")) {
 
                         // Clear the array
                         items.clear();
 
                         //Fils an array with items of the returned query using a JsonArray
                         try {
-                            JSONArray jsonArray = jsonObject.getJSONArray("Search");
+                            JSONArray jsonArray = jsonObject.getJSONArray("artObjects");
+                            Log.d("RESULT", String.valueOf(jsonArray));
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jObj = jsonArray.getJSONObject(i);
-                                String title = jObj.getString("Title");
+                                String title = jObj.getString("title");
+                                String id = jObj.getString("id");
+
                                 items.add(title);
+                                items.add(id);
                             }
 
                             // Fills the listview of the page with the results
@@ -189,7 +199,7 @@ public class SearchFoundActivity extends SearchActivity {
     // Handles a search query and starts a task with the query
     public void search() {
         //String userQuery = mEdit.getText().toString();
-        String param = "s";
+        String param = "q";
         try {
             new Task().execute(searched_art, param).get();
         } catch (InterruptedException e) {
