@@ -12,22 +12,26 @@
     tools:context="com.example.anh.anhnguyen_pset6.SearchActivity">
 
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/searchArt"
-        android:layout_alignParentLeft="true"
-        android:text="search"
-        android:onClick="findArt"/>
+    `
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search"
-        android:id="@+id/searchArt"
+        android:id="@+id/searchArtEdit"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="172dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="search"
+        android:onClick="findArt"
+        android:id="@+id/search_button"
+        android:layout_below="@+id/searchArtEdit"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

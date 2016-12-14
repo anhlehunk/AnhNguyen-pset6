@@ -3,22 +3,31 @@ package com.example.anh.anhnguyen_pset6;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import org.json.JSONException;
+
+import java.util.concurrent.ExecutionException;
+
+import static com.example.anh.anhnguyen_pset6.R.layout.activity_search_found;
 
 public class SearchActivity extends AppCompatActivity {
+    searchFragment searchfragment = new searchFragment();
 
-    EditText user_searchInput;
     String user_input;
+    private EditText searchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        user_searchInput = (EditText) findViewById(R.id.searchArt);
+        searchText = (EditText)findViewById(R.id.searchArtEdit);
+
+        //user_searchInput = (EditText) findViewById(R.id.searchArtEdit);
     }
 
     @Override
@@ -28,23 +37,37 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
-    public void findArt(View view){
+    public void findArt(View view) throws InterruptedException, ExecutionException, JSONException {
 
-        user_input = user_searchInput.getText().toString();
-
+        user_input = searchText.getText().toString();
         if (user_input.equals("")) {
-            Toast.makeText(this, "Please enter an artwork or artist!", Toast.LENGTH_SHORT).show();}
+            Toast.makeText(this, "Please enter artwork or artist!", Toast.LENGTH_SHORT)
+                    .show();}
 
         else{
-            // moves to BooksFoundActivity, adds user input string
-            Intent foundArt = new Intent(this,SearchFoundActivity.class);
-            foundArt.putExtra("found_art", user_input);
-            startActivity(foundArt);
+                Log.d("LOGG", searchText.getText().toString());
+                Intent searchArt = new Intent(this, SearchFoundActivity.class);
+                searchArt.putExtra("searched_art", user_input);
+                startActivity(searchArt);
+                searchText.setText("");
 
-            // clear the EditText
-            user_searchInput.getText().clear();
+            }
 
-        }
+
+
+        //
+
+
+
+
+        /*if (user_input.equals("")) {
+            Toast.makeText(this, "Please enter an artwork or artist!", Toast.LENGTH_SHORT).show();}*/
+
+
+
+
+
+
 
     }
 }

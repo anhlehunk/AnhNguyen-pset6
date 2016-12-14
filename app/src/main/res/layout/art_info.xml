@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/move_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.anh.anhnguyen_pset6.SearchFoundActivity"
+    >
+
+    <ImageView
+        android:id="@+id/posterImg"
+        android:layout_width="160dp"
+        android:layout_height="200dp"
+        android:padding="20dp"
+        />
+    <TextView
+        android:id="@+id/specInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/posterImg"
+        android:padding="20dp"
+        />
+
+    <TextView
+        android:id="@+id/specPlot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:layout_below="@+id/specInfo"
+        />
+
+    <Button
+        android:id="@+id/watchListMove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@+id/specPlot"
+        android:padding="20dp"
+        android:layout_margin="20dp"
+        android:onClick="addRemoveMovie"
+        />
+
+
+</RelativeLayout>
