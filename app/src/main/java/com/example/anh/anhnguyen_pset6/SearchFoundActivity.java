@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +41,9 @@ import java.util.concurrent.ExecutionException;
 import static android.R.attr.id;
 import static android.R.id.list;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static android.widget.Toast.makeText;
 import static com.example.anh.anhnguyen_pset6.R.id.proberen;
+import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 
 public class SearchFoundActivity extends SearchActivity {
@@ -128,7 +136,7 @@ public class SearchFoundActivity extends SearchActivity {
             String param = "q";
 
             try {
-                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&ps=50&format=json&culture=en&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
+                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&ps=50&format=json&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 StringBuilder result = new StringBuilder();
@@ -238,14 +246,40 @@ public class SearchFoundActivity extends SearchActivity {
         this.finish();
     }
 
-    public void toWatchList(View view) {
+    public void toFavorite(View view) {
         Intent intent = new Intent(this, FavoriteActivity.class);
         startActivity(intent);
         this.finish();
     }
 
+    public void logOut(View view){
 
-    }
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                        Log.d("AUTH", "USER LOGGED OUT");
+
+                        startActivityForResult(AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setTheme(R.style.FirebaseLoginTheme)
+                                .setProviders(
+                                        AuthUI.EMAIL_PROVIDER,
+                                        AuthUI.GOOGLE_PROVIDER)
+
+                                .build(), RC_SIGN_IN);
+                        //toast
+                        Toast succesful = makeText(SearchFoundActivity.this, "Logged out" , Toast.LENGTH_SHORT);
+                        succesful.show();
+                    }
+
+
+
+                });
+
+
+    }}
 
 
 

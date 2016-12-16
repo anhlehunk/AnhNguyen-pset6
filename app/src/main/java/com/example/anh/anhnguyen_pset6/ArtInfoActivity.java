@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -32,7 +37,9 @@ import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 import static android.R.attr.id;
+import static android.widget.Toast.makeText;
 import static com.example.anh.anhnguyen_pset6.R.id.proberen;
+import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 public class ArtInfoActivity extends AppCompatActivity {
 
@@ -48,7 +55,7 @@ public class ArtInfoActivity extends AppCompatActivity {
     TextView artMaker;
     TextView year;
     ImageView artImage;
-
+    ImageView faveImage;
     TextView resultText;
     String result;
     Button button;
@@ -70,6 +77,7 @@ public class ArtInfoActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         button = (Button)findViewById(R.id.addBut);
+        faveImage = (ImageView) findViewById(R.id.heart);
 
         search();
         Bundle extras = getIntent().getExtras();
@@ -96,7 +104,7 @@ public class ArtInfoActivity extends AppCompatActivity {
 
 
             try {
-                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection/" + art_id + "?key=KTtoPFMp&format=json&culture=en").openStream();
+                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection/" + art_id + "?key=KTtoPFMp&format=json").openStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 StringBuilder result = new StringBuilder();
                 String line;
@@ -150,9 +158,11 @@ public class ArtInfoActivity extends AppCompatActivity {
             }
             if (sharedPreferences.contains(art_ID)) {
                 button.setText("Remove");
+                faveImage.setImageResource(R.drawable.heartyes);
             }
             else {
                 button.setText("Add");
+                faveImage.setImageResource(R.drawable.heartno);
             }
 
         } catch (JSONException e) {
@@ -168,10 +178,11 @@ public class ArtInfoActivity extends AppCompatActivity {
 
             editor.commit();
             button.setText("Remove");
+            faveImage.setImageResource(R.drawable.heartyes);
         }
         else {
             editor.remove(art_ID);
-
+            faveImage.setImageResource(R.drawable.heartno);
             editor.commit();
             button.setText("Add");
         }
@@ -204,12 +215,36 @@ public class ArtInfoActivity extends AppCompatActivity {
         this.finish();
     }
 
-    public void toWatchList(View view) {
+    public void toFavorite(View view) {
         Intent intent = new Intent(this, FavoriteActivity.class);
         startActivity(intent);
         this.finish();
     }
 
+    public void logOut(View view){
+
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("AUTH", "USER LOGGED OUT");
+
+                        startActivityForResult(AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setTheme(R.style.FirebaseLoginTheme)
+                                .setProviders(
+                                        AuthUI.EMAIL_PROVIDER,
+                                        AuthUI.GOOGLE_PROVIDER)
+
+                                .build(), RC_SIGN_IN);
+                        //toast
+                        Toast succesful = makeText(ArtInfoActivity.this, "Logged out" , Toast.LENGTH_SHORT);
+                        succesful.show();
+    }
 
 
-}
+
+});
+
+    }}

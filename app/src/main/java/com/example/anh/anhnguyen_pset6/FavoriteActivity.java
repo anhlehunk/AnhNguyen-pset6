@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +30,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static android.R.id.edit;
+import static android.widget.Toast.makeText;
+import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 import static com.google.android.gms.internal.zznu.it;
 
 public class FavoriteActivity extends AppCompatActivity {
@@ -62,19 +70,15 @@ public class FavoriteActivity extends AppCompatActivity {
             if (!entry.getKey().equals(Name)/* && entry.getKey().equals("ArtTitle")*/ ) {
                 idlist.add(entry.getKey().toString());
                 artlist.add(entry.getValue().toString());
-                Log.d("ccontain", String.valueOf(idlist));
-                Log.d("ccontain", String.valueOf(artlist));
+
             }
 
         }
 
-
         FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, idlist);
         FavoriteActivity.this.lv.setAdapter(arrayAdapter);
 
-        // Use the created array to fill the listview through an adapter
-        //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.proberen1, artlist);
-        //this.lv.setAdapter(arrayAdapter);
+
 
         // Hanlde clicks on the listview
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -124,13 +128,38 @@ public class FavoriteActivity extends AppCompatActivity {
         this.finish();
     }
 
-    public void toWatchList(View view) {
+    public void toFavorite(View view) {
         Intent intent = new Intent(this, FavoriteActivity.class);
         startActivity(intent);
         this.finish();
     }
 
-}
+    public void logOut(View view){
+
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("AUTH", "USER LOGGED OUT");
+
+                        startActivityForResult(AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setTheme(R.style.FirebaseLoginTheme)
+                                .setProviders(
+                                        AuthUI.EMAIL_PROVIDER,
+                                        AuthUI.GOOGLE_PROVIDER)
+
+                                .build(), RC_SIGN_IN);
+                        //toast
+                        Toast succesful = makeText(FavoriteActivity.this, "Logged out" , Toast.LENGTH_SHORT);
+                        succesful.show();
+                    }
+
+
+
+                });
+}}
 
 
 

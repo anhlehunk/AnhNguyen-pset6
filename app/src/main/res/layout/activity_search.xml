@@ -29,45 +29,49 @@
         android:layout_below="@+id/searchArtEdit"
         android:layout_centerHorizontal="true" />
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:weightSum="1.0"
         android:layout_alignParentBottom="true"
-        android:background="#000000"
+        android:background="#A1000000"
+        android:id="@+id/linearLay"
         >
-        <Button
-            android:id="@+id/homeButton"
+
+        <ImageView
             android:layout_width="0dp"
-            android:layout_weight="0.30"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/searchPageButton"
+            android:layout_height="35dp"
+            android:layout_weight="0.15"
             android:onClick="toHome"
-            android:text="Home"
-            />
+            android:src="@drawable/home"/>
 
         <Button
             android:id="@+id/searchPageButton"
             android:layout_width="0dp"
-            android:layout_weight="0.40"
-            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
-            android:text="Search Page"
+            android:text="Search"
             android:onClick="toSearchPage"
             />
 
         <Button
-            android:id="@+id/watchButton"
+            android:id="@+id/FavoriteButton"
             android:layout_toRightOf="@+id/searchPageButton"
             android:layout_width="0dp"
-            android:layout_weight="0.30"
-            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="Watchlist"
-            android:onClick="toWatchList"
+            android:text="favorite"
+            android:onClick="toFavorite"
             />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="0.15"
+            android:src="@drawable/logout"
+            android:onClick="logOut"/>
     </LinearLayout>
 
 

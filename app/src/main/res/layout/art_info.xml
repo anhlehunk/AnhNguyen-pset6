@@ -14,7 +14,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_above="@+id/addBut"
-    android:background="#1A000000">
+    android:background="#1A000000"
+    android:id="@+id/scroll">
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -73,6 +74,10 @@
         android:id="@+id/description"
         android:layout_below="@+id/artImage"
         android:padding="20dp"/>
+
+
+
+
 </RelativeLayout>
 </ScrollView>
 
@@ -80,43 +85,47 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linear"
+        android:weightSum="1.0"
         android:layout_alignParentBottom="true"
-        android:background="#000000"
+        android:background="#A1000000"
+        android:id="@+id/linearLay"
         >
-        <Button
-            android:id="@+id/homeButton"
+
+        <ImageView
             android:layout_width="0dp"
-            android:layout_weight="0.30"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/searchPageButton"
+            android:layout_height="35dp"
+            android:layout_weight="0.15"
             android:onClick="toHome"
-            android:text="Home"
-            />
+            android:src="@drawable/home"/>
 
         <Button
             android:id="@+id/searchPageButton"
             android:layout_width="0dp"
-            android:layout_weight="0.40"
-            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
-            android:text="Search Page"
+            android:text="Search"
             android:onClick="toSearchPage"
             />
 
         <Button
-            android:id="@+id/watchButton"
+            android:id="@+id/FavoriteButton"
             android:layout_toRightOf="@+id/searchPageButton"
             android:layout_width="0dp"
-            android:layout_weight="0.30"
-            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="Watchlist"
-            android:onClick="toWatchList"
+            android:text="favorite"
+            android:onClick="toFavorite"
             />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="0.15"
+            android:src="@drawable/logout"
+            android:onClick="logOut"/>
     </LinearLayout>
 
     <Button
@@ -126,9 +135,20 @@
         android:text=""
         android:padding="20dp"
         android:onClick="addRemove"
-        android:layout_above="@+id/linear"
+        android:layout_above="@+id/linearLay"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/scroll"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/heart"
+        android:src="@drawable/heartno"
+        android:layout_marginTop="5dp"
+        android:onClick="addRemove"/>
 
 
 </RelativeLayout>

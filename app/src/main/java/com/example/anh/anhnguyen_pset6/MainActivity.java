@@ -155,10 +155,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(startNewActivity);
     }
 
-    private void signIn(){
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
 
     private void signOut(){
 
@@ -183,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                 });
 
-        //FirebaseAuth.getInstance().signOut();
+
     }
 
     @Override
