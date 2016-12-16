@@ -8,29 +8,33 @@
     >
 
     <TextView
-        android:id="@+id/watchWelcome"
+        android:id="@+id/Favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:textSize="30dp"
-        android:layout_toLeftOf="@+id/clearButton"
-        android:padding="20dp"
+        android:textSize="25dp"
+        android:text="@string/favorites"
+        android:layout_margin="10dp"
         />
 
-    <Button
-        android:id="@+id/clearButton"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/FavoriteDescription"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Clear"
-        android:padding="20dp"
-        android:layout_alignParentRight="true"
-        android:onClick="emptyWatchList"
+        android:layout_alignParentLeft="true"
+        android:textSize="15dp"
+        android:text="@string/favoriteDescription"
+        android:layout_below="@+id/Favorite"
+        android:layout_marginBottom="10dp"
+
+        />
+
         />
     <ListView
         android:id="@+id/watchList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/watchWelcome"
+        android:layout_below="@+id/FavoriteDescription"
 
         />
 

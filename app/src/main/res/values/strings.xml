@@ -7,6 +7,7 @@
     <string name="signout">sign out</string>
     <string name="loginInfo">email@email.com</string>
     <string name="description">click on item for more info</string>
+    <string name="favoriteDescription">click on item for more info, longclick to delete item</string>
 
 
 </resources>

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static android.R.id.edit;
 import static com.google.android.gms.internal.zznu.it;
 
 public class FavoriteActivity extends AppCompatActivity {
@@ -54,8 +55,8 @@ public class FavoriteActivity extends AppCompatActivity {
         lv = (ListView)findViewById(R.id.watchList);
 
         // Loop through the added movies and put those movies inside an array
-        ArrayList<String> artlist = new ArrayList<String>();
-        ArrayList<String> idlist = new ArrayList<String>();
+        final ArrayList<String> artlist = new ArrayList<String>();
+        final ArrayList<String> idlist = new ArrayList<String>();
         ArrayList<String> urllist = new ArrayList<String>();
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
@@ -66,24 +67,16 @@ public class FavoriteActivity extends AppCompatActivity {
                 Log.d("ccontain", String.valueOf(idlist));
                 Log.d("ccontain", String.valueOf(artlist));
             }
-           /* if (!entry.getKey().equals(Name) && entry.getKey().equals("ArtId") ) {
 
-                idlist.add(entry.getValue().toString());
-            }
-
-            if (!entry.getKey().equals(Name) && entry.getKey().equals("ArtImage") ) {
-
-                urllist.add(entry.getValue().toString());
-            }*/
         }
 
 
-        //FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, urllist, idlist);
-        //FavoriteActivity.this.lv.setAdapter(arrayAdapter);
+        FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, idlist);
+        FavoriteActivity.this.lv.setAdapter(arrayAdapter);
 
         // Use the created array to fill the listview through an adapter
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.proberen1, artlist);
-        this.lv.setAdapter(arrayAdapter);
+        //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.proberen1, artlist);
+        //this.lv.setAdapter(arrayAdapter);
 
         // Hanlde clicks on the listview
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,67 +84,38 @@ public class FavoriteActivity extends AppCompatActivity {
             // Retrieve the movie title and execute a Asynctask using that title
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String title = ((TextView) view).getText().toString();
-                try {
-                    new Task().execute(title).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+                TextView idView = (TextView) view.findViewById(R.id.artID);
+                String art_id = idView.getText().toString();
+                Intent intent = new Intent(FavoriteActivity.this, ArtInfoActivity.class);
+                intent.putExtra("Info", art_id);
+                startActivity(intent);
+                FavoriteActivity.this.finish();
             }
+        });
+
+        // Hanlde clicks on the listview
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, idlist);
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView idView = (TextView) view.findViewById(R.id.artID);
+                TextView titleView = (TextView) view.findViewById(R.id.title);
+                String deleted = "Deleted";
+                titleView.setText(deleted);
+                titleView.setTextColor(getResources().getColor(R.color.red));
+                String art_id = idView.getText().toString();
+                editor.remove(art_id);
+                editor.commit();
+                arrayAdapter.notifyDataSetChanged();
+                return true;
+            }
+
+
         });
     }
 
-    // Function to clear the full watchlist
-    public void emptyWatchList(View view) {
-
-        // Retrieves every key that is not Name and removes those keys
-        Map<String, ?> allEntries = sharedPreferences.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if (!entry.getKey().equals(Name)) {
-                Log.d("Key", "Key " + entry.getKey());
-                editor.remove(entry.getKey());
-            }
-        }
-        // Resets the listview
-        editor.commit();
-        ArrayAdapter adapter = (ArrayAdapter)lv.getAdapter();
-        adapter.clear();
-        adapter.notifyDataSetChanged();
-    }
-
-    // Asyntask to handle the request from clicking on a movie
-    public class Task extends AsyncTask<String, Object, StringBuilder> {
-
-        @Override
-        protected StringBuilder doInBackground(String... params) {
-            try {
-                // Retrieves the information from omdbapi and returns the result of the query
-                InputStream input = new URL("http://www.omdbapi.com/?t=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                StringBuilder result = new StringBuilder();
-                String line;
-                while((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
-                return result;
-            }
-            catch (IOException e) {
-                Log.d("MainActivity", "Error" + e);
-                return null;
-            }
-        }
-
-        public void onPostExecute(StringBuilder result) {
-
-            // Starts a MovieInf activity and passes the result of the query to this activity
-            Intent intent = new Intent(FavoriteActivity.this, ArtInfoActivity.class);
-            intent.putExtra("Info", result.toString());
-            startActivity(intent);
-            FavoriteActivity.this.finish();
-        }
-
 }
 
-}
+
+
+

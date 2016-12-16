@@ -239,11 +239,6 @@ public class SearchFoundActivity extends SearchActivity {
 
 
 
-    public void orderList (){
-
-
-
-    }
 
     // Handles a search query and starts a task with the query
     public void search() {

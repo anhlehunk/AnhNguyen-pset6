@@ -48,7 +48,6 @@ public class ArtInfoActivity extends AppCompatActivity {
     TextView proberen;
     String result;
     Button button;
-
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
