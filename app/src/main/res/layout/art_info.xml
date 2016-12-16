@@ -7,18 +7,19 @@
     tools:context="com.example.anh.anhnguyen_pset6.SearchFoundActivity"
     >
 
-    <ImageView
-        android:id="@+id/posterImg"
-        android:layout_width="160dp"
-        android:layout_height="200dp"
-        android:padding="20dp"
-        />
     <TextView
-        android:id="@+id/specInfo"
+        android:id="@+id/artId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/posterImg"
+        android:layout_toRightOf="@+id/artImage"
         android:padding="20dp"
+        android:layout_below="@+id/title"
+        />
+
+    <TextView
+        android:id="@+id/proberen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         />
 
     <TextView
@@ -26,19 +27,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:layout_below="@+id/specInfo"
+        android:layout_below="@+id/title"
         />
 
     <Button
-        android:id="@+id/watchListMove"
+        android:id="@+id/addBut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:layout_below="@+id/specPlot"
         android:padding="20dp"
-        android:layout_margin="20dp"
-        android:onClick="addRemoveMovie"
-        />
+        android:onClick="addRemove"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:layout_alignParentTop="true"
+        android:textSize="15dp"/>
+
+    <ImageView
+        android:id="@+id/artImage"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:padding="20dp"
+        android:layout_below="@+id/title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

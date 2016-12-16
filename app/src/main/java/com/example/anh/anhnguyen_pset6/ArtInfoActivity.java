@@ -1,6 +1,7 @@
 package com.example.anh.anhnguyen_pset6;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,73 +10,140 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
+
+import static android.R.attr.id;
 
 public class ArtInfoActivity extends AppCompatActivity {
 
-    // Assign variables
+    String art_id;
+    String title;
+    JSONObject art_object;
+    JSONObject image_object;
+    TextView artTitle;
+    TextView artID;
+    ImageView artImage;
+    JSONObject imageUrl;
+    TextView proberen;
+    String result;
+    Button button;
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-
-    ImageView posterImg;
-    TextView titleText;
-    TextView infoText;
-    TextView plotText;
-    Button button;
-    String title;
 
     public static final String myPreference = "mypreference";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_info);
-
-        // Assign the specific views to variables
-        posterImg = (ImageView)findViewById(R.id.posterImg);
-        infoText = (TextView)findViewById(R.id.specInfo);
-        plotText = (TextView)findViewById(R.id.specPlot);
-        button = (Button)findViewById(R.id.watchListMove);
-
+        artTitle = (TextView) findViewById(R.id.title);
+        artID = (TextView) findViewById(R.id.artId);
+        artImage = (ImageView) findViewById(R.id.artImage);
         // Finds the preferences and assign an editor
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        button = (Button)findViewById(R.id.addBut);
 
-        // Retrieves the extra information from the intent that called this activity
+        search();
         Bundle extras = getIntent().getExtras();
-        String query = extras.getString("Info");
+        if (extras != null) {
+            art_id = extras.getString("Info");}
+
+     }
+
+    // AsyncTask to handle queries to the omdbapi, whether it is a search or a specific movie
+    public class Task_info extends AsyncTask<String, Object, String> {
+
+
+
+        protected void onPreExecute() {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                art_id = extras.getString("Info");}
+
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            // Retrieves the param and fills the URl accordingly and returns the results of the query
+            String param = art_id;
+
+
+            try {
+                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection/" + art_id + "?key=KTtoPFMp&format=json").openStream();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                Log.d("INPUUUUT", param + result );
+
+                return result.toString();
+
+            }
+            catch (IOException e) {
+                Log.d("MainActivity", "Error" + e);
+                return null;
+            }
+        }
+
+        public void onPostExecute(String result) {
+
+        proberen = (TextView) findViewById(R.id.proberen);
+        proberen.setText(result);
+        Log.d("jezus", result);
+        proberen.setVisibility(View.GONE);
+        order();
+        }
+
+
+        }
+
+    public void order(){
+        proberen = (TextView) findViewById(R.id.proberen);
+        result = proberen.getText().toString();
+
         try {
-            // Makes an JSON object of the query and assign the information to variables
-            JSONObject obj = new JSONObject(query);
-            String poster = obj.getString("Poster");
-            title = obj.getString("Title");
-            String released = obj.getString("Released");
-            String runtime = obj.getString("Runtime");
-            String genre = obj.getString("Genre");
-            String director = obj.getString("Director");
-            String actors = obj.getString("Actors");
-            String plot = obj.getString("Plot");
+            JSONObject total_object = new JSONObject(result);
+            art_object = total_object.getJSONObject("artObject");
+            Log.d("OKE",art_object.toString());
+            title = art_object.get("title").toString() ;
+            artTitle.setText(art_object.get("title").toString());
+            artID.setText(art_object.get("objectNumber").toString());
+            //artImage.setImageResource(R.drawable.no_image);
+            //Log.d("proberen" , (art_object.get("webImage").toString()));
+            if (art_object.get("webImage").toString() == "null" ) {
+                artImage.setImageResource(R.drawable.no_image);
+            } else {
+                // Picasso used to place the image retrieved from the url in the imageview.
+                image_object = art_object.getJSONObject("webImage");
+                Log.d("proberen ", String.valueOf(image_object.get("url")));
+                Picasso.with(this).load(image_object.get("url").toString()).resize(1000, 1000).into(artImage);
 
-            // Uses all the variables to fill the page with information of the particular movie
-            infoText.setText(
-                    "Title: " + title +  "\r\n"
-                            + "Released: " + released + "\r\n"
-                            + "Runtime: " + runtime + "\r\n"
-                            + "Genre: " + genre + "\r\n"
-                            + "Director: " + director + "\r\n"
-                            + "Actors: " + actors + "\r\n"
-            );
-            plotText.setText(plot);
-
-            // Checks whether the movie is inside the prefernces and renames the button accordingly
+            }
             if (sharedPreferences.contains(title)) {
                 button.setText("Remove");
             }
@@ -83,24 +151,13 @@ public class ArtInfoActivity extends AppCompatActivity {
                 button.setText("Add");
             }
 
-            // AsyncTask to retrieve the poster of the movie online
-            // If there is no poster a placeholder is loaded
-            if (poster.equals("N/A")){
-                poster = "http://www.floridaacs.com/images/image_not_found.png";
-            }
-            new BitMap().execute(poster).get();
-
         } catch (JSONException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         }
+
     }
 
-    // Function for the button to either remove or add the movie to the preferences
-    public void addRemoveMovie(View view) {
+    public void addRemove(View view) {
         if (button.getText().equals("Add")) {
             editor.putString(title, title);
             editor.commit();
@@ -113,25 +170,20 @@ public class ArtInfoActivity extends AppCompatActivity {
         }
     }
 
-    // AsyncTask to retrieve the movie poster
-    private class BitMap extends AsyncTask<String, Object, Bitmap> {
 
-        protected Bitmap doInBackground(String... params) {
-            try {
-                // Retrieves a BitMap from the given link and returns that bitmap
-                URL url = new URL(params[0]);
-                Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                Log.d("Back", "Back " + bmp);
-                return bmp;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+
+    public void search() {
+        //String userQuery = mEdit.getText().toString();
+        String param = "";
+        try {
+            new Task_info().execute(art_id, param).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
+    }
 
-        public void onPostExecute(Bitmap bmp) {
-            // Sets the image within the page to the retrieved BitMap
-            posterImg.setImageBitmap(bmp);
-        }
 
-    }}
+
+}

@@ -22,7 +22,7 @@ private ArrayList<String> artlist;
 private ArrayList<String> artposters;
 private Context context;
 
-        ArtAdapter(ArrayList<String> artlist, ArrayList<String> artposters, Context context){
+        ArtAdapter(Context context, ArrayList<String> artlist, ArrayList<String> artposters){
         this.artlist = artlist;
         this.context = context;
         this.artposters = artposters;
