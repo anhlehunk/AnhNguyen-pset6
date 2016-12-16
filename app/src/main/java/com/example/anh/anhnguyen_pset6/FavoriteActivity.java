@@ -47,8 +47,6 @@ public class FavoriteActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        // Set welcome text and use username to personalize this text
-        welcomeText = (TextView)findViewById(R.id.watchWelcome);
 
 
         // Find ListView
@@ -112,6 +110,24 @@ public class FavoriteActivity extends AppCompatActivity {
 
 
         });
+    }
+
+    public void toHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void toSearchPage(View view) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void toWatchList(View view) {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 
 }

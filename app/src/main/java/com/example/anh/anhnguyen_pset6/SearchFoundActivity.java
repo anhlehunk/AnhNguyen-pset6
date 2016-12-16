@@ -48,9 +48,7 @@ public class SearchFoundActivity extends SearchActivity {
     public ArrayList<String> urllist;
     String searched_art;
     TextView lookedFor;
-    String art_id;
-    TextView idTextView;
-    String result;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,19 +119,16 @@ public class SearchFoundActivity extends SearchActivity {
     public class Task extends AsyncTask<String, Object, String> {
         TextView emptySearch = (TextView) findViewById(R.id.emptysearch);
 
-
         protected void onPreExecute() {
             emptySearch.setVisibility(View.INVISIBLE);
         }
 
         @Override
         protected String doInBackground(String... params) {
-
-            // Retrieves the param and fills the URl accordingly and returns the results of the query
             String param = "q";
 
             try {
-                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&format=json&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
+                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&ps=50&format=json&culture=en&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 StringBuilder result = new StringBuilder();
@@ -151,34 +146,27 @@ public class SearchFoundActivity extends SearchActivity {
         }
 
         public void onPostExecute(String result) {
-
-            // Splits the result to differentiate between a search and a specific query
             String param = result.substring(0, 1);
             String query = result.substring(1);
             try {
 
                 JSONObject jsonObject = new JSONObject(query);
-                Log.d("INPUT", query);
                 if (jsonObject.has("Error")) {
                     artlist.clear();
                     ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
                     SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
                 }
                 else {
-                    //Log.d("INPUparam", param);
-                    // Statement for a search
+
                     if (param.equals("q")) {
 
                         // Clear the array
-                        Log.d("jezus", result);
+
                         artlist.clear();
 
                         try {
 
-
-
                             JSONArray jsonArray = jsonObject.getJSONArray("artObjects");
-                            Log.d("RESULT", String.valueOf(jsonArray));
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jObj = jsonArray.getJSONObject(i);
                                 String title = jObj.getString("title");
@@ -196,6 +184,9 @@ public class SearchFoundActivity extends SearchActivity {
                                     urllist.add( url);}
 
                             }
+                            if ((artlist.size() == 0)){
+                                emptySearch.setVisibility(View.VISIBLE);
+                            }
 
                         ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
                         SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
@@ -207,27 +198,9 @@ public class SearchFoundActivity extends SearchActivity {
                         }
 
 
-                        //proberen1.setText(query);
-
-
-                        //proberen1 = (TextView) findViewById(R.id.proberen1);
-
-                        //proberen1.setText(query);
-
-                        //proberen1.setVisibility(View.GONE);
-                        //orderList();
-
-                        //Fils an array with items of the returned query using a JsonArray
-
                     }
-
-                    // Else starts a new activity with the information of a specific movie
                     else {
 
-                       /* Intent intent = new Intent(SearchFoundActivity.this, ArtInfoActivity.class);
-                        //intent.putExtra("Info", query);
-                        startActivity(intent);
-                        SearchFoundActivity.this.finish();*/
                     }
                 }
             } catch (JSONException e) {
@@ -251,6 +224,24 @@ public class SearchFoundActivity extends SearchActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    public void toHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void toSearchPage(View view) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void toWatchList(View view) {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 
 

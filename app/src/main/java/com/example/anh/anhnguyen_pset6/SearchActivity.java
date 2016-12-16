@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import static com.example.anh.anhnguyen_pset6.R.layout.activity_search_found;
 
 public class SearchActivity extends AppCompatActivity {
-    searchFragment searchfragment = new searchFragment();
+
 
     String user_input;
     private EditText searchText;
@@ -32,8 +32,8 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater mi = getMenuInflater();
-        mi.inflate(R.menu.menu, menu);
+        MenuInflater minflater = getMenuInflater();
+        minflater.inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -53,21 +53,23 @@ public class SearchActivity extends AppCompatActivity {
 
             }
 
+    }
 
+    public void toHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
 
-        //
+    public void toSearchPage(View view) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
 
-
-
-
-        /*if (user_input.equals("")) {
-            Toast.makeText(this, "Please enter an artwork or artist!", Toast.LENGTH_SHORT).show();}*/
-
-
-
-
-
-
-
+    public void toWatchList(View view) {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 }

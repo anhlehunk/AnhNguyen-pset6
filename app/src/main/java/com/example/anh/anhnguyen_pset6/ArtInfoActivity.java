@@ -32,6 +32,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 import static android.R.attr.id;
+import static com.example.anh.anhnguyen_pset6.R.id.proberen;
 
 public class ArtInfoActivity extends AppCompatActivity {
 
@@ -39,13 +40,16 @@ public class ArtInfoActivity extends AppCompatActivity {
     String title;
     String image_object_string;
     String art_ID;
+    String description;
     JSONObject art_object;
     JSONObject image_object;
     TextView artTitle;
-    TextView artID;
+    TextView artDescription;
+    TextView artMaker;
+    TextView year;
     ImageView artImage;
-    JSONObject imageUrl;
-    TextView proberen;
+
+    TextView resultText;
     String result;
     Button button;
     SharedPreferences sharedPreferences;
@@ -57,9 +61,12 @@ public class ArtInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_info);
         artTitle = (TextView) findViewById(R.id.title);
-        //artID = (TextView) findViewById(R.id.artId);
+        artDescription = (TextView) findViewById(R.id.description);
+        artMaker = (TextView) findViewById(R.id.maker);
+        year = (TextView) findViewById(R.id.year);
         artImage = (ImageView) findViewById(R.id.artImage);
-        // Finds the preferences and assign an editor
+
+        // Finds preferences and assign an editor
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         button = (Button)findViewById(R.id.addBut);
@@ -71,11 +78,8 @@ public class ArtInfoActivity extends AppCompatActivity {
 
      }
 
-    // AsyncTask to handle queries to the omdbapi, whether it is a search or a specific movie
+    // AsyncTask to handle queries to the API
     public class Task_info extends AsyncTask<String, Object, String> {
-
-
-
         protected void onPreExecute() {
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
@@ -88,67 +92,65 @@ public class ArtInfoActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
             // Retrieves the param and fills the URl accordingly and returns the results of the query
-            String param = art_id;
+            //String param = art_id;
 
 
             try {
-                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection/" + art_id + "?key=KTtoPFMp&format=json").openStream();
-
+                InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection/" + art_id + "?key=KTtoPFMp&format=json&culture=en").openStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 StringBuilder result = new StringBuilder();
                 String line;
                 while((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                Log.d("INPUUUUT", param + result );
+
 
                 return result.toString();
 
             }
             catch (IOException e) {
-                Log.d("MainActivity", "Error" + e);
                 return null;
             }
         }
 
         public void onPostExecute(String result) {
 
-        proberen = (TextView) findViewById(R.id.proberen);
-        proberen.setText(result);
-        Log.d("jezus", result);
-        proberen.setVisibility(View.GONE);
+        resultText = (TextView) findViewById(proberen);
+        resultText.setText(result);
+        resultText.setVisibility(View.GONE);
         order();
-        }
-        }
+        }}
 
     public void order(){
-        proberen = (TextView) findViewById(R.id.proberen);
-        result = proberen.getText().toString();
+        resultText = (TextView) findViewById(proberen);
+        result = resultText.getText().toString();
 
         try {
             JSONObject total_object = new JSONObject(result);
             art_object = total_object.getJSONObject("artObject");
-            Log.d("OKE",art_object.toString());
+            String maker_text = art_object.getJSONArray("principalMakers").getJSONObject(0).get("name").toString();;
             title = art_object.get("title").toString() ;
             art_ID = art_object.get("objectNumber").toString() ;
-            artTitle.setText(art_object.get("title").toString());
-            //artID.setText(art_object.get("objectNumber").toString());
-            //artImage.setImageResource(R.drawable.no_image);
-            //Log.d("proberen" , (art_object.get("webImage").toString()));
+            description = art_object.get("description").toString();
+
+
+            artTitle.setText(title);
+            artDescription.setText("Description:\n"  + description);
+            artMaker.setText("Artist(s) :" + maker_text);
+            String year_text = "Year: " + art_object.getJSONObject("dating").get("year").toString();
+            year.setText(year_text);
             if (art_object.get("webImage").toString() == "null" ) {
                 artImage.setImageResource(R.drawable.no_image);
             } else {
                 // Picasso used to place the image retrieved from the url in the imageview.
                 image_object = art_object.getJSONObject("webImage");
                 image_object_string = art_object.getJSONObject("webImage").toString();
-                Log.d("proberen ", String.valueOf(image_object.get("url")));
                 Picasso.with(this).load(image_object.get("url").toString()).resize(1000, 1000).into(artImage);
 
             }
             if (sharedPreferences.contains(art_ID)) {
-                //if (sharedPreferences.contains(title)){
                 button.setText("Remove");
-            }//}
+            }
             else {
                 button.setText("Add");
             }
@@ -169,7 +171,7 @@ public class ArtInfoActivity extends AppCompatActivity {
         }
         else {
             editor.remove(art_ID);
-            //editor.remove(art_ID);
+
             editor.commit();
             button.setText("Add");
         }
@@ -178,7 +180,8 @@ public class ArtInfoActivity extends AppCompatActivity {
 
 
     public void search() {
-        //String userQuery = mEdit.getText().toString();
+
+
         String param = "";
         try {
             new Task_info().execute(art_id, param).get();
@@ -187,6 +190,24 @@ public class ArtInfoActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    public void toHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void toSearchPage(View view) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void toWatchList(View view) {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 
 
