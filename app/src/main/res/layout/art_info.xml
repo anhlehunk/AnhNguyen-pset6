@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/move_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.anh.anhnguyen_pset6.SearchFoundActivity"
     >
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/artId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/artImage"
-        android:padding="20dp"
-        android:layout_below="@+id/title"
-        />
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <TextView
         android:id="@+id/proberen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         />
 
     <TextView
@@ -30,19 +32,7 @@
         android:layout_below="@+id/title"
         />
 
-    <Button
-        android:id="@+id/addBut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:padding="20dp"
-        android:onClick="addRemove"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="24dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp" />
+
 
     <TextView
         android:id="@+id/title"
@@ -50,7 +40,8 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:layout_alignParentTop="true"
-        android:textSize="15dp"/>
+        android:textSize="20dp"
+        android:gravity="center"/>
 
     <ImageView
         android:id="@+id/artImage"
@@ -63,3 +54,26 @@
 
 
 </RelativeLayout>
+</ScrollView>
+
+
+<Button
+    android:id="@+id/addBut"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text=""
+    android:padding="20dp"
+    android:onClick="addRemove"
+    android:layout_marginLeft="20dp"
+    android:layout_marginBottom="24dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_marginStart="20dp" />
+
+
+</RelativeLayout>
+
+
+
+

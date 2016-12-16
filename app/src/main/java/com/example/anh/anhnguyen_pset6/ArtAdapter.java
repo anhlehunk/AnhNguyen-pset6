@@ -20,12 +20,14 @@ import java.util.ArrayList;
 class ArtAdapter extends BaseAdapter {
 private ArrayList<String> artlist;
 private ArrayList<String> artposters;
+private ArrayList<String> idlist;
 private Context context;
 
-        ArtAdapter(Context context, ArrayList<String> artlist, ArrayList<String> artposters){
+        ArtAdapter(Context context, ArrayList<String> artlist, ArrayList<String> artposters, ArrayList<String> idlist){
         this.artlist = artlist;
         this.context = context;
         this.artposters = artposters;
+        this.idlist = idlist;
         }
 
         // Gets the size of the artlist retrieved.
@@ -39,6 +41,8 @@ private Context context;
         public Object getItem(int position) {
                 return artlist.get(position);
                 }
+
+
 
         // Gets the position.
         @Override
@@ -57,6 +61,9 @@ private Context context;
                 TextView title = (TextView) view.findViewById(R.id.title);
                 // Textview with the title of the art.
                 title.setText(artlist.get(position));
+                TextView art_id = (TextView) view.findViewById(R.id.artID);
+                // Textview with the title of the art.
+                art_id.setText(idlist.get(position));
                 ImageView image = (ImageView) view.findViewById(R.id.image);
                 // Imageview with the image url of the art.
                 String url = artposters.get(position);

@@ -37,6 +37,8 @@ public class ArtInfoActivity extends AppCompatActivity {
 
     String art_id;
     String title;
+    String image_object_string;
+    String art_ID;
     JSONObject art_object;
     JSONObject image_object;
     TextView artTitle;
@@ -56,7 +58,7 @@ public class ArtInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_info);
         artTitle = (TextView) findViewById(R.id.title);
-        artID = (TextView) findViewById(R.id.artId);
+        //artID = (TextView) findViewById(R.id.artId);
         artImage = (ImageView) findViewById(R.id.artImage);
         // Finds the preferences and assign an editor
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
@@ -118,8 +120,6 @@ public class ArtInfoActivity extends AppCompatActivity {
         proberen.setVisibility(View.GONE);
         order();
         }
-
-
         }
 
     public void order(){
@@ -131,8 +131,9 @@ public class ArtInfoActivity extends AppCompatActivity {
             art_object = total_object.getJSONObject("artObject");
             Log.d("OKE",art_object.toString());
             title = art_object.get("title").toString() ;
+            art_ID = art_object.get("objectNumber").toString() ;
             artTitle.setText(art_object.get("title").toString());
-            artID.setText(art_object.get("objectNumber").toString());
+            //artID.setText(art_object.get("objectNumber").toString());
             //artImage.setImageResource(R.drawable.no_image);
             //Log.d("proberen" , (art_object.get("webImage").toString()));
             if (art_object.get("webImage").toString() == "null" ) {
@@ -140,13 +141,15 @@ public class ArtInfoActivity extends AppCompatActivity {
             } else {
                 // Picasso used to place the image retrieved from the url in the imageview.
                 image_object = art_object.getJSONObject("webImage");
+                image_object_string = art_object.getJSONObject("webImage").toString();
                 Log.d("proberen ", String.valueOf(image_object.get("url")));
                 Picasso.with(this).load(image_object.get("url").toString()).resize(1000, 1000).into(artImage);
 
             }
-            if (sharedPreferences.contains(title)) {
+            if (sharedPreferences.contains(art_ID)) {
+                //if (sharedPreferences.contains(title)){
                 button.setText("Remove");
-            }
+            }//}
             else {
                 button.setText("Add");
             }
@@ -159,12 +162,15 @@ public class ArtInfoActivity extends AppCompatActivity {
 
     public void addRemove(View view) {
         if (button.getText().equals("Add")) {
-            editor.putString(title, title);
+            editor.putString(art_ID,title);
+
+
             editor.commit();
             button.setText("Remove");
         }
         else {
-            editor.remove(title);
+            editor.remove(art_ID);
+            //editor.remove(art_ID);
             editor.commit();
             button.setText("Add");
         }

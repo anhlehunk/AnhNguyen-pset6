@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static com.google.android.gms.internal.zznu.it;
+
 public class FavoriteActivity extends AppCompatActivity {
 
     // Create variables
@@ -31,6 +33,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
     public static final String myPreference = "mypreference";
     public static final String Name = "nameKey";
+    public static final String title = "title";
 
     TextView welcomeText;
     ListView lv;
@@ -51,16 +54,35 @@ public class FavoriteActivity extends AppCompatActivity {
         lv = (ListView)findViewById(R.id.watchList);
 
         // Loop through the added movies and put those movies inside an array
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> artlist = new ArrayList<String>();
+        ArrayList<String> idlist = new ArrayList<String>();
+        ArrayList<String> urllist = new ArrayList<String>();
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if (!entry.getKey().equals(Name)) {
-                items.add(entry.getValue().toString());
+            //Log.d("ccontain", String.valueOf(allEntries) );
+            if (!entry.getKey().equals(Name)/* && entry.getKey().equals("ArtTitle")*/ ) {
+                idlist.add(entry.getKey().toString());
+                artlist.add(entry.getValue().toString());
+                Log.d("ccontain", String.valueOf(idlist));
+                Log.d("ccontain", String.valueOf(artlist));
             }
+           /* if (!entry.getKey().equals(Name) && entry.getKey().equals("ArtId") ) {
+
+                idlist.add(entry.getValue().toString());
+            }
+
+            if (!entry.getKey().equals(Name) && entry.getKey().equals("ArtImage") ) {
+
+                urllist.add(entry.getValue().toString());
+            }*/
         }
 
+
+        //FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, urllist, idlist);
+        //FavoriteActivity.this.lv.setAdapter(arrayAdapter);
+
         // Use the created array to fill the listview through an adapter
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.textview, items);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.proberen1, artlist);
         this.lv.setAdapter(arrayAdapter);
 
         // Hanlde clicks on the listview
@@ -130,4 +152,6 @@ public class FavoriteActivity extends AppCompatActivity {
             FavoriteActivity.this.finish();
         }
 
-}}
+}
+
+}

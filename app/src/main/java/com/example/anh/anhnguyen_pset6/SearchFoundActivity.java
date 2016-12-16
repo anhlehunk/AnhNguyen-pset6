@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 import static android.R.attr.id;
 import static android.R.id.list;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-
+import static com.example.anh.anhnguyen_pset6.R.id.proberen;
 
 
 public class SearchFoundActivity extends SearchActivity {
@@ -49,6 +49,8 @@ public class SearchFoundActivity extends SearchActivity {
     String searched_art;
     TextView lookedFor;
     String art_id;
+    TextView idTextView;
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +79,17 @@ public class SearchFoundActivity extends SearchActivity {
             // Sets the title and param of the specific movie
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String art_id = ((TextView) view).getText().toString();
+
+                TextView idView = (TextView) view.findViewById(R.id.artID);
+                String art_id = idView.getText().toString();
                 Intent intent = new Intent(SearchFoundActivity.this, ArtInfoActivity.class);
                 intent.putExtra("Info", art_id);
                 startActivity(intent);
+                SearchFoundActivity.this.finish();
 
 
-                Log.d("ID", art_id);
+
+
                 String param = "iets anders";
                 // Executes task to retrieve information of that specific movie
                 try {
@@ -99,8 +105,8 @@ public class SearchFoundActivity extends SearchActivity {
         // Checks for saved instance state and fills the listview with the found movies when the orientation is chagned
         if (savedInstanceState != null) {
             artlist = (ArrayList<String>) savedInstanceState.getSerializable("items");
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.textview, artlist);
-            this.lv.setAdapter(arrayAdapter);
+            ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
+            SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
         }
     }
 
@@ -125,7 +131,7 @@ public class SearchFoundActivity extends SearchActivity {
 
             // Retrieves the param and fills the URl accordingly and returns the results of the query
             String param = "q";
-            Log.d("HAHA", param);
+
             try {
                 InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&format=json&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
 
@@ -155,7 +161,7 @@ public class SearchFoundActivity extends SearchActivity {
                 Log.d("INPUT", query);
                 if (jsonObject.has("Error")) {
                     artlist.clear();
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SearchFoundActivity.this, R.layout.list_item, R.id.textview, idlist);
+                    ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
                     SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
                 }
                 else {
@@ -164,10 +170,13 @@ public class SearchFoundActivity extends SearchActivity {
                     if (param.equals("q")) {
 
                         // Clear the array
+                        Log.d("jezus", result);
                         artlist.clear();
 
-                        //Fils an array with items of the returned query using a JsonArray
                         try {
+
+
+
                             JSONArray jsonArray = jsonObject.getJSONArray("artObjects");
                             Log.d("RESULT", String.valueOf(jsonArray));
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -177,16 +186,39 @@ public class SearchFoundActivity extends SearchActivity {
 
                                 artlist.add(title);
                                 idlist.add(id);
-                                Log.d("IDDD", String.valueOf(idlist));
+                                if(jObj.get("webImage").equals(null)){
+                                    String url = "";
+                                    urllist.add(url);
+                                }
+                                else {
+                                    JSONObject image = jObj.getJSONObject("webImage");
+                                    String url = image.get("url").toString();
+                                    urllist.add( url);}
+
                             }
 
-                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SearchFoundActivity.this, R.layout.list_item, R.id.textview, idlist);
-                            SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
+                        ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
+                        SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
+
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+
+                        //proberen1.setText(query);
+
+
+                        //proberen1 = (TextView) findViewById(R.id.proberen1);
+
+                        //proberen1.setText(query);
+
+                        //proberen1.setVisibility(View.GONE);
+                        //orderList();
+
+                        //Fils an array with items of the returned query using a JsonArray
+
                     }
 
                     // Else starts a new activity with the information of a specific movie
@@ -205,6 +237,13 @@ public class SearchFoundActivity extends SearchActivity {
         }
     }
 
+
+
+    public void orderList (){
+
+
+
+    }
 
     // Handles a search query and starts a task with the query
     public void search() {
