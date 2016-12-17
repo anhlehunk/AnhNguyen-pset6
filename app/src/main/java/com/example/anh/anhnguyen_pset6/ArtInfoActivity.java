@@ -73,7 +73,7 @@ public class ArtInfoActivity extends AppCompatActivity {
         year = (TextView) findViewById(R.id.year);
         artImage = (ImageView) findViewById(R.id.artImage);
 
-        // Finds preferences and assign an editor
+        // An editor after finding sharedpreferences
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         button = (Button)findViewById(R.id.addBut);
@@ -86,7 +86,7 @@ public class ArtInfoActivity extends AppCompatActivity {
 
      }
 
-    // AsyncTask to handle queries to the API
+    // AsyncTask to handle queries to the database
     public class Task_info extends AsyncTask<String, Object, String> {
         protected void onPreExecute() {
             Bundle extras = getIntent().getExtras();
@@ -100,7 +100,7 @@ public class ArtInfoActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
             // Retrieves the param and fills the URl accordingly and returns the results of the query
-            //String param = art_id;
+
 
 
             try {
@@ -111,8 +111,6 @@ public class ArtInfoActivity extends AppCompatActivity {
                 while((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-
-
                 return result.toString();
 
             }
@@ -174,24 +172,23 @@ public class ArtInfoActivity extends AppCompatActivity {
     public void addRemove(View view) {
         if (button.getText().equals("Add")) {
             editor.putString(art_ID,title);
-
-
             editor.commit();
             button.setText("Remove");
             faveImage.setImageResource(R.drawable.heartyes);
+            Toast succesful = makeText(ArtInfoActivity.this, "Added to favorites" , Toast.LENGTH_SHORT);
+            succesful.show();
         }
         else {
             editor.remove(art_ID);
-            faveImage.setImageResource(R.drawable.heartno);
             editor.commit();
             button.setText("Add");
+            faveImage.setImageResource(R.drawable.heartno);
+            Toast succesful = makeText(ArtInfoActivity.this, "Removed from favorites" , Toast.LENGTH_SHORT);
+            succesful.show();
         }
     }
 
-
-
     public void search() {
-
 
         String param = "";
         try {

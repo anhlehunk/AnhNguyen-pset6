@@ -194,29 +194,21 @@ public class SearchFoundActivity extends SearchActivity {
                             }
                             if ((artlist.size() == 0)){
                                 emptySearch.setVisibility(View.VISIBLE);
+                                Toast succesful = makeText(SearchFoundActivity.this, "No results found, please try again" , Toast.LENGTH_SHORT);
+                                succesful.show();
                             }
 
                         ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
                         SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
 
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
                     }
-                    else {
-
-                    }
-                }
+                    else {}}
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
-
-        }
-    }
+            }}}
 
 
 

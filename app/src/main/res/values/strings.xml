@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">AnhNguyen-pset6</string>
     <string name="title">RijksmuseApp </string>
-    <string name="appDescription">certain text explain app etc etc etc etc</string>
+    <string name="appDescription">With this app, created around the RijksMuseum Api, you can search for all the artworks available in the Rijksmuseum Database.
+    If you like one, you can add it to your favorites!</string>
     <string name="searchTitle">Search artwork</string>
     <string name="favorites">Favorites</string>
     <string name="signout">sign out</string>

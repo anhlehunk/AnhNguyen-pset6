@@ -14,21 +14,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title"
-        android:textSize="30dp"
-        android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/appTitle"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appTitle"
+        android:layout_below="@+id/appTitle"
         android:layout_centerHorizontal="true"
         android:text="@string/appDescription"
         android:id="@+id/appDescription"
+        android:gravity="center"
         />
 
     <Button
@@ -71,13 +61,22 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"/>
 
-    <Button
-        android:text="@string/signout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:src="@drawable/logout"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/SignOut" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:id="@+id/appTitle"
+        android:src="@drawable/logo"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp" />
 
 </RelativeLayout>

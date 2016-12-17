@@ -109,6 +109,9 @@ public class FavoriteActivity extends AppCompatActivity {
                 editor.remove(art_id);
                 editor.commit();
                 arrayAdapter.notifyDataSetChanged();
+                Toast succesful = makeText(FavoriteActivity.this, "Deleted succesfully" , Toast.LENGTH_SHORT);
+                succesful.show();
+
                 return true;
             }
 
