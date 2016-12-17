@@ -27,25 +27,25 @@ class FavoriteAdapter extends BaseAdapter {
         this.idlist = idlist;
     }
 
-    // Gets the size of the artlist retrieved.
+    //size
     @Override
     public int getCount() {
         return artlist.size();
     }
 
-    // Gets the art at a certain position.
+    // Gets a certain position.
     @Override
     public Object getItem(int position) {
         return artlist.get(position);
     }
 
-    // Gets the position.
+
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    // Sets adapter view for the search listview.
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -57,9 +57,8 @@ class FavoriteAdapter extends BaseAdapter {
         // Textview with the title of the art.
         title.setText(artlist.get(position));
         TextView art_id = (TextView) view.findViewById(R.id.artID);
-        // Textview with the title of the art.
+        //set id
         art_id.setText(idlist.get(position));
-
         return view;
     }
 }

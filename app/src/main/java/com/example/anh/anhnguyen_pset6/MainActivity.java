@@ -36,32 +36,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth.AuthStateListener mAuthListener;
 
 
-
-    public static Bundle myBundle = new Bundle();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null){
-            //already logged in
-
-            Log.d("AUTH", mAuth.getCurrentUser().getEmail());
+            //if already logged in
             TextView currentUser = (TextView) findViewById(R.id.loginInfo);
             currentUser.setText(mAuth.getCurrentUser().getEmail());
 
 
         } else {
-
+            //If not logged in, the login screen will be created
             startActivityForResult(AuthUI.getInstance()
                     .createSignInIntentBuilder()
+                    //assign a theme to the loginscreen
                     .setTheme(R.style.FirebaseLoginTheme)
                     .setProviders(
                             AuthUI.EMAIL_PROVIDER,
                             AuthUI.GOOGLE_PROVIDER)
-
-                    .build(), RC_SIGN_IN);
-        }
+                    .build(), RC_SIGN_IN);}
 
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -75,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
 
         };
+
+        //Gives the option to quick sign in with google
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -84,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
 
         findViewById(R.id.SignOut).setOnClickListener(this);
     }
@@ -106,8 +102,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN){
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-
+            //Check if the login is succesful
             if(resultCode == RESULT_OK){
                 String userEmail = mAuth.getCurrentUser().getEmail();
                 Log.d("AUTH", userEmail);
@@ -117,34 +112,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 succesful.show();
                 TextView currentUser = (TextView) findViewById(R.id.loginInfo);
                 currentUser.setText(mAuth.getCurrentUser().getEmail());
-
             }
-
             else{
                 Log.d("AUTH","not Authenticated");
-            }
+            }}}
 
-            /*if(result.isSuccess()){
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            }
-
-            else
-                Log.d(TAG," google login failed"); */
-        }
-    }
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("Auth", "signInWithCredential:oncomplete:" + task.isSuccessful());
-                    }
-                });
-    }
-
+    //some intents, to navigate to certain activities
     public void searchMessage (View view){
         Intent startNewActivity = new Intent(this, SearchActivity.class);
         startActivity(startNewActivity);
@@ -155,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(startNewActivity);
     }
 
-
+    //logs out if button is clicked
     private void signOut(){
 
         AuthUI.getInstance()
@@ -164,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d("AUTH", "USER LOGGED OUT");
-
                         startActivityForResult(AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .setTheme(R.style.FirebaseLoginTheme)
@@ -177,25 +149,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         Toast succesful = makeText(MainActivity.this, "Logged out" , Toast.LENGTH_SHORT);
                         succesful.show();
                     }
-                });
-
-
-    }
+                });}
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
         Log.d(TAG, "Connection failed");
-
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-
             case R.id.SignOut:
                 signOut();
                 break;
-        }
-    }
-}
+        }}}

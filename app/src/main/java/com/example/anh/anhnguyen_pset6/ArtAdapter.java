@@ -30,13 +30,13 @@ private Context context;
         this.idlist = idlist;
         }
 
-        // Gets the size of the artlist retrieved.
+        // Gets the size of the artlist
         @Override
         public int getCount() {
                 return artlist.size();
                 }
 
-        // Gets the art at a certain position.
+        // Gets the art at a  position.
         @Override
         public Object getItem(int position) {
                 return artlist.get(position);
@@ -44,13 +44,13 @@ private Context context;
 
 
 
-        // Gets the position.
+
         @Override
         public long getItemId(int position) {
                 return position;
                 }
 
-        // Sets adapter view for the search listview.
+        // Sets adapter view for the search result listview.
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -62,17 +62,17 @@ private Context context;
                 // Textview with the title of the art.
                 title.setText(artlist.get(position));
                 TextView art_id = (TextView) view.findViewById(R.id.artID);
-                // Textview with the title of the art.
+                //textview with invisible ID
                 art_id.setText(idlist.get(position));
                 ImageView image = (ImageView) view.findViewById(R.id.image);
-                // Imageview with the image url of the art.
+                // Imageview with the url for the image
                 String url = artposters.get(position);
                 // If there is no url, then a drawable of a no image will be set to the imageview.
                 if(url.equals("")){
                 image.setImageResource(R.drawable.no_image);
                 }
                 else {
-                // Picasso used for setting the image to the retrieved image from the url.
+                //set the image
                 Picasso.with(context).load(url).fit().into(image);
                 }
                 return view;

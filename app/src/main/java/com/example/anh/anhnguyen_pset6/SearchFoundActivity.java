@@ -38,11 +38,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import static android.R.attr.id;
-import static android.R.id.list;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+
 import static android.widget.Toast.makeText;
-import static com.example.anh.anhnguyen_pset6.R.id.proberen;
+
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 
@@ -72,43 +70,27 @@ public class SearchFoundActivity extends SearchActivity {
         lookedFor = (TextView) findViewById(R.id.lookedFor);
         lookedFor.setText("Looked for: " + searched_art);
         lv = (ListView)findViewById(R.id.searchlist);
-
-
          artlist = new ArrayList<>();
          urllist = new ArrayList<>();
          idlist = new ArrayList<>();
 
         search();
-        // Handles clicks on listview items
+        // Handles clicks items of the list
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            // Sets the title and param of the specific movie
+            // takes the ID and give it to an intent, because the id is required to search for one specific item
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 TextView idView = (TextView) view.findViewById(R.id.artID);
                 String art_id = idView.getText().toString();
                 Intent intent = new Intent(SearchFoundActivity.this, ArtInfoActivity.class);
                 intent.putExtra("Info", art_id);
                 startActivity(intent);
                 SearchFoundActivity.this.finish();
-
-
-
-
-                String param = "iets anders";
-                // Executes task to retrieve information of that specific movie
-                try {
-                    new Task().execute(art_id, param).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
-        // Checks for saved instance state and fills the listview with the found movies when the orientation is chagned
+        // Checks for saved instance state
         if (savedInstanceState != null) {
             artlist = (ArrayList<String>) savedInstanceState.getSerializable("items");
             ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
@@ -116,7 +98,7 @@ public class SearchFoundActivity extends SearchActivity {
         }
     }
 
-    // Sets the savedinstancestate when the orientation is changed with the listview items
+    // Sets the savedinstancestate when the orientation is changed
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -125,26 +107,25 @@ public class SearchFoundActivity extends SearchActivity {
 
     // AsyncTask to handle queries to the omdbapi, whether it is a search or a specific movie
     public class Task extends AsyncTask<String, Object, String> {
+        //Textview for if there is no result, but the textview is still invisible before the AsyncTask
         TextView emptySearch = (TextView) findViewById(R.id.emptysearch);
-
         protected void onPreExecute() {
             emptySearch.setVisibility(View.INVISIBLE);
         }
 
         @Override
         protected String doInBackground(String... params) {
+            //set the param as q
             String param = "q";
-
             try {
+                //the url is built with the input of the user
                 InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection?key=Xs2UQsih&ps=50&format=json&" + URLEncoder.encode(param, "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8")).openStream();
-
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 StringBuilder result = new StringBuilder();
                 String line;
                 while((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                //Log.d("INPUUUUT", param + result );
                 return param + result;
             }
             catch (IOException e) {
@@ -152,12 +133,13 @@ public class SearchFoundActivity extends SearchActivity {
                 return null;
             }
         }
-
+        //After the results are returned:
         public void onPostExecute(String result) {
+            //split the  param from the useful query
             String param = result.substring(0, 1);
             String query = result.substring(1);
             try {
-
+                //pick out the needed data out of the query
                 JSONObject jsonObject = new JSONObject(query);
                 if (jsonObject.has("Error")) {
                     artlist.clear();
@@ -165,39 +147,40 @@ public class SearchFoundActivity extends SearchActivity {
                     SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
                 }
                 else {
-
                     if (param.equals("q")) {
 
                         // Clear the array
-
                         artlist.clear();
-
                         try {
-
+                            //loops through all the results and add the title, image link, and unique id to two different lists
                             JSONArray jsonArray = jsonObject.getJSONArray("artObjects");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jObj = jsonArray.getJSONObject(i);
                                 String title = jObj.getString("title");
                                 String id = jObj.getString("objectNumber");
 
+                                //add required data to lists
                                 artlist.add(title);
                                 idlist.add(id);
+                                // Send "" (empty string)to the list when there is no image available
                                 if(jObj.get("webImage").equals(null)){
                                     String url = "";
                                     urllist.add(url);
                                 }
+                                //Sends url of the image to lists if there is one available
                                 else {
                                     JSONObject image = jObj.getJSONObject("webImage");
                                     String url = image.get("url").toString();
                                     urllist.add( url);}
 
                             }
+                            //no results will cause the textview with "no results" to show
                             if ((artlist.size() == 0)){
                                 emptySearch.setVisibility(View.VISIBLE);
                                 Toast succesful = makeText(SearchFoundActivity.this, "No results found, please try again" , Toast.LENGTH_SHORT);
                                 succesful.show();
                             }
-
+                        //set adapter on the listview
                         ArtAdapter arrayAdapter = new ArtAdapter(SearchFoundActivity.this, artlist, urllist, idlist);
                         SearchFoundActivity.this.lv.setAdapter(arrayAdapter);
 
@@ -212,10 +195,10 @@ public class SearchFoundActivity extends SearchActivity {
 
 
 
+    // method to execute the AsyncTask
+    // Handles a search query and starts a task
 
-    // Handles a search query and starts a task with the query
     public void search() {
-        //String userQuery = mEdit.getText().toString();
         String param = "q";
         try {
             new Task().execute(searched_art, param).get();
@@ -225,7 +208,7 @@ public class SearchFoundActivity extends SearchActivity {
             e.printStackTrace();
         }
     }
-
+    //navigation bar
     public void toHome(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

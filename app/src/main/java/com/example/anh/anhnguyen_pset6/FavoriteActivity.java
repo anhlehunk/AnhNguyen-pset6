@@ -43,43 +43,33 @@ public class FavoriteActivity extends AppCompatActivity {
     public static final String myPreference = "mypreference";
     public static final String Name = "nameKey";
     public static final String title = "title";
-
-    TextView welcomeText;
     ListView lv;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
 
-        // Retrieve preferences and assign editor
+        // assign editor
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-
-
 
         // Find ListView
         lv = (ListView)findViewById(R.id.watchList);
 
-        // Loop through the added movies and put those movies inside an array
+        // Loop through the added data and put data inside an array
         final ArrayList<String> artlist = new ArrayList<String>();
         final ArrayList<String> idlist = new ArrayList<String>();
-        ArrayList<String> urllist = new ArrayList<String>();
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            //Log.d("ccontain", String.valueOf(allEntries) );
-            if (!entry.getKey().equals(Name)/* && entry.getKey().equals("ArtTitle")*/ ) {
+
+            if (!entry.getKey().equals(Name) ) {
                 idlist.add(entry.getKey().toString());
-                artlist.add(entry.getValue().toString());
-
-            }
-
+                artlist.add(entry.getValue().toString());}
         }
-
+        //set the adapter
         FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, idlist);
         FavoriteActivity.this.lv.setAdapter(arrayAdapter);
-
-
-
+        
         // Hanlde clicks on the listview
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -88,6 +78,7 @@ public class FavoriteActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView idView = (TextView) view.findViewById(R.id.artID);
                 String art_id = idView.getText().toString();
+                //gets the id of an artwork, and sends it to the ArtInfoActivity
                 Intent intent = new Intent(FavoriteActivity.this, ArtInfoActivity.class);
                 intent.putExtra("Info", art_id);
                 startActivity(intent);
@@ -100,25 +91,26 @@ public class FavoriteActivity extends AppCompatActivity {
             FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, idlist);
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //identify textviews
                 TextView idView = (TextView) view.findViewById(R.id.artID);
                 TextView titleView = (TextView) view.findViewById(R.id.title);
                 String deleted = "Deleted";
+                //The title is replaced with deleted
                 titleView.setText(deleted);
                 titleView.setTextColor(getResources().getColor(R.color.red));
+                //remove the unique id key
                 String art_id = idView.getText().toString();
                 editor.remove(art_id);
                 editor.commit();
+                //refresh
                 arrayAdapter.notifyDataSetChanged();
                 Toast succesful = makeText(FavoriteActivity.this, "Deleted succesfully" , Toast.LENGTH_SHORT);
                 succesful.show();
-
                 return true;
             }
-
-
         });
     }
-
+    //navigation bar at the bottom
     public void toHome(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

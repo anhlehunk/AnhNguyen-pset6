@@ -67,23 +67,29 @@ public class ArtInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_info);
+
+        //assign to all items in the layout
         artTitle = (TextView) findViewById(R.id.title);
         artDescription = (TextView) findViewById(R.id.description);
         artMaker = (TextView) findViewById(R.id.maker);
         year = (TextView) findViewById(R.id.year);
         artImage = (ImageView) findViewById(R.id.artImage);
+        faveImage = (ImageView) findViewById(R.id.heart);
 
         // An editor after finding sharedpreferences
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        button = (Button)findViewById(R.id.addBut);
-        faveImage = (ImageView) findViewById(R.id.heart);
 
+        //button
+        button = (Button)findViewById(R.id.addBut);
+
+        //Instantly execute the asyncTask
         search();
+
+        //Get the needed intent
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             art_id = extras.getString("Info");}
-
      }
 
     // AsyncTask to handle queries to the database
@@ -92,16 +98,11 @@ public class ArtInfoActivity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
                 art_id = extras.getString("Info");}
-
-
         }
 
+        //AsyncTask that is started immediately when entering the ArtInfoActivity (this)
         @Override
         protected String doInBackground(String... params) {
-
-            // Retrieves the param and fills the URl accordingly and returns the results of the query
-
-
 
             try {
                 InputStream input = new URL("https://www.rijksmuseum.nl/api/nl/collection/" + art_id + "?key=KTtoPFMp&format=json").openStream();
@@ -112,7 +113,6 @@ public class ArtInfoActivity extends AppCompatActivity {
                     result.append(line);
                 }
                 return result.toString();
-
             }
             catch (IOException e) {
                 return null;
@@ -120,10 +120,11 @@ public class ArtInfoActivity extends AppCompatActivity {
         }
 
         public void onPostExecute(String result) {
-
+        //prints the result to an invisible textview
         resultText = (TextView) findViewById(proberen);
         resultText.setText(result);
         resultText.setVisibility(View.GONE);
+        //execute the method that puts all the data in the right place
         order();
         }}
 
@@ -134,15 +135,20 @@ public class ArtInfoActivity extends AppCompatActivity {
         try {
             JSONObject total_object = new JSONObject(result);
             art_object = total_object.getJSONObject("artObject");
-            String maker_text = art_object.getJSONArray("principalMakers").getJSONObject(0).get("name").toString();;
+            //get makers
+            String maker_text = art_object.getJSONArray("principalMakers").getJSONObject(0).get("name").toString();
+            //get title of the art
             title = art_object.get("title").toString() ;
+            //get id of the art
             art_ID = art_object.get("objectNumber").toString() ;
+            //gets the description
             description = art_object.get("description").toString();
 
-
+            //Set all the required data in the right place
             artTitle.setText(title);
             artDescription.setText("Description:\n"  + description);
             artMaker.setText("Artist(s) :" + maker_text);
+            //gets the year
             String year_text = "Year: " + art_object.getJSONObject("dating").get("year").toString();
             year.setText(year_text);
             if (art_object.get("webImage").toString() == "null" ) {
@@ -154,10 +160,12 @@ public class ArtInfoActivity extends AppCompatActivity {
                 Picasso.with(this).load(image_object.get("url").toString()).resize(1000, 1000).into(artImage);
 
             }
+            //Check in shared preferences if the Id( unique key) is already saved
             if (sharedPreferences.contains(art_ID)) {
                 button.setText("Remove");
                 faveImage.setImageResource(R.drawable.heartyes);
             }
+            //If not available in shared preferences, you can add the artwork
             else {
                 button.setText("Add");
                 faveImage.setImageResource(R.drawable.heartno);
@@ -168,7 +176,7 @@ public class ArtInfoActivity extends AppCompatActivity {
         }
 
     }
-
+    //method to remove or add items to shared preferences, and so your favorites list
     public void addRemove(View view) {
         if (button.getText().equals("Add")) {
             editor.putString(art_ID,title);
@@ -187,9 +195,8 @@ public class ArtInfoActivity extends AppCompatActivity {
             succesful.show();
         }
     }
-
+    //method called immediately when this activity opens, it starts the AsyncTask
     public void search() {
-
         String param = "";
         try {
             new Task_info().execute(art_id, param).get();
@@ -200,6 +207,8 @@ public class ArtInfoActivity extends AppCompatActivity {
         }
     }
 
+
+    //navigationbar at the bottom
     public void toHome(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
