@@ -41,7 +41,6 @@ public class FavoriteActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     public static final String myPreference = "mypreference";
-    public static final String Name = "nameKey";
     public static final String title = "title";
     ListView lv;
 
@@ -61,15 +60,14 @@ public class FavoriteActivity extends AppCompatActivity {
         final ArrayList<String> idlist = new ArrayList<String>();
         Map<String, ?> allEntries = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-
-            if (!entry.getKey().equals(Name) ) {
+                //add the needed data to different lists
                 idlist.add(entry.getKey().toString());
-                artlist.add(entry.getValue().toString());}
+                artlist.add(entry.getValue().toString());
         }
         //set the adapter
         FavoriteAdapter arrayAdapter = new FavoriteAdapter(FavoriteActivity.this, artlist, idlist);
         FavoriteActivity.this.lv.setAdapter(arrayAdapter);
-        
+
         // Hanlde clicks on the listview
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
