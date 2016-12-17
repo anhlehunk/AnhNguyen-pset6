@@ -133,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:padding="20dp"
+        android:padding="10dp"
         android:onClick="addRemove"
         android:layout_above="@+id/linearLay"
         android:layout_alignParentLeft="true"
@@ -141,8 +141,8 @@
 
     <ImageView
 
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_below="@+id/scroll"
         android:layout_centerHorizontal="true"
         android:id="@+id/heart"
